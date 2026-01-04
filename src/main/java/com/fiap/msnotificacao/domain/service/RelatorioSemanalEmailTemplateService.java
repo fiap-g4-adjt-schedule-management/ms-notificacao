@@ -45,10 +45,10 @@ public class RelatorioSemanalEmailTemplateService {
                 Classificação de feedback por pontuação:
               </p>
               <ul>
-                <li><strong> Critical:</strong> Feedbacks com pontuação <strong>igual ou superior a 6</strong>,
+                <li><strong> Critical:</strong> Feedbacks com pontuação <strong>igual ou inferior a 6</strong>,
                  que indicam problemas e exigem atenção imediata.
               </li>
-                <li><strong> Normal:</strong> Feedbacks com pontuação <strong>inferior a 6</strong>,
+                <li><strong> Normal:</strong> Feedbacks com pontuação <strong>superior a 6</strong>,
                 relacionadas a sugestões ou pontos de melhoria.
               </li>
               </ul>
