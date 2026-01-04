@@ -26,7 +26,7 @@ class NotificarFeedbackCriticoUseCaseTest {
 
         useCase.executar(msg);
 
-        verify(emailPort, never()).enviarEmail(any(), any());
+        verify(emailPort, never()).enviarEmailFeedbackCritico(any(), any());
     }
 
     @Test
@@ -51,7 +51,7 @@ class NotificarFeedbackCriticoUseCaseTest {
 
         useCase.executar(message);
 
-        verify(emailPort).enviarEmail(eq(message), any());
+        verify(emailPort).enviarEmailFeedbackCritico(eq(message), any());
     }
 
 
@@ -76,7 +76,7 @@ class NotificarFeedbackCriticoUseCaseTest {
 
         doThrow(new RuntimeException("Falha SendGrid"))
                 .when(emailPort)
-                .enviarEmail(any(), any());
+                .enviarEmailFeedbackCritico(any(), any());
 
         assertThrows(RuntimeException.class, () -> useCase.executar(message));
     }

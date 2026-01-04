@@ -1,6 +1,6 @@
 ## 📌 MS-NOTIFICACAO – Serviço de Notificação (Serverless | Java)
 
-Este repositório contém o microsserviço **ms-notificacao**, responsável por **consumir feedbacks críticos publicados em uma fila** e **notificar administradores via e-mail**.
+Este repositório contém o microsserviço **ms-notificacao**, responsável por **consumir mensagens publicadas em filas** e **notificar administradores via e-mail**, de acordo com o tipo de evento recebido.
 
 O serviço foi desenvolvido em **Java**, utilizando **Azure Functions**, seguindo os princípios de **Serverless**, **Responsabilidade Única** e **Arquitetura Hexagonal (Ports & Adapters)**.
 
@@ -10,16 +10,23 @@ O serviço foi desenvolvido em **Java**, utilizando **Azure Functions**, seguind
 
 Este microsserviço possui **uma única responsabilidade**:
 
-> Consumir mensagens de feedback publicadas em uma fila e enviar notificações por e-mail quando o feedback for crítico.
+> Consumir mensagens de notificação publicadas em filas e enviar e-mails aos administradores.
+
+Atualmente, o serviço trata **dois tipos de notificações**:
+
+1. **Notificação de feedback crítico**
+2. **Notificação de relatório semanal de avaliações**
 
 O serviço **não**:
 
 * cria feedbacks
-* calcula médias
+* calcula métricas
+* gera relatórios
 * gerencia usuários
 * persiste dados
 
-Essa separação é **intencional** e faz parte da proposta arquitetural do projeto.
+Toda a lógica de geração das informações ocorre em outros microsserviços.
+Este serviço atua **exclusivamente como consumidor e notificador**.
 
 ---
 
@@ -28,13 +35,13 @@ Essa separação é **intencional** e faz parte da proposta arquitetural do proj
 * **Plataforma:** Microsoft Azure
 * **Modelo:** Serverless
 * **Runtime:** Java 17
-* **Trigger:** Azure Service Bus Queue
+* **Triggers:** Azure Service Bus Queue
 * **Notificação:** SendGrid (E-mail)
 * **Monitoramento:** Azure Functions Logs / Application Insights
 
 ### Arquitetura Hexagonal (Ports & Adapters)
 
-O projeto foi estruturado seguindo **Arquitetura Hexagonal**, separando claramente responsabilidades:
+O projeto segue **Arquitetura Hexagonal**, separando claramente responsabilidades:
 
 * **Domain:** modelos e regras de negócio
 * **Application (Use Cases):** orquestração da lógica
@@ -44,29 +51,37 @@ O projeto foi estruturado seguindo **Arquitetura Hexagonal**, separando claramen
 Fluxo simplificado:
 
 ```
-[Outro Microsserviço]
-        |
-        v
-[Azure Service Bus Queue]
-        |
-        v
-[Azure Function - Adapter Inbound]
-        |
-        v
-[Use Case - NotificarFeedbackCritico]
-        |
-        v
+[Outros Microsserviços]
+          |
+          v
+[Azure Service Bus Queues]
+          |
+          v
+[Azure Functions - Adapters Inbound]
+          |
+          v
+[Use Cases]
+          |
+          v
 [EmailPort]
-        |
-        v
+          |
+          v
 [SendGrid Adapter]
 ```
 
 ---
 
-## 📥 Contrato da Mensagem Consumida
+## 🔔 Tipos de Notificação
 
-A função consome mensagens da fila no seguinte formato JSON:
+### 1️⃣ Notificação de Feedback Crítico
+
+#### Fila consumida
+
+```
+q-ms-notificacao
+```
+
+#### Contrato da Mensagem
 
 ```json
 {
@@ -79,17 +94,13 @@ A função consome mensagens da fila no seguinte formato JSON:
 }
 ```
 
-### Regras de Processamento
+#### Regras de Processamento
 
 * Se `critical = false` → nenhuma ação é tomada
 * Se `critical = true` → um e-mail é enviado ao administrador
-* Em caso de falha no envio do e-mail → a função lança exceção para permitir **retry automático** pelo Service Bus
+* Em caso de falha no envio → exceção é lançada para permitir **retry automático** pelo Service Bus
 
----
-
-## ✉️ Conteúdo do E-mail
-
-O e-mail enviado contém:
+#### Conteúdo do E-mail
 
 * ID do feedback
 * Data do feedback
@@ -100,11 +111,51 @@ O e-mail enviado contém:
 
 ---
 
+### 2️⃣ Notificação de Relatório Semanal de Avaliações
+
+#### Fila consumida
+
+```
+q-ms-weekly-report
+```
+
+#### Contrato da Mensagem
+
+```json
+{
+  "ratingCountByDate": [
+    { "label": "YYYY-MM-DD", "value": "number" }
+  ],
+  "ratingCountByUrgency": [
+    { "label": "CRITICAL", "value": "number" },
+    { "label": "NORMAL", "value": "number" }
+  ],
+  "dateTimeEmission": "ISO-8601"
+}
+```
+
+#### Regras de Processamento
+
+* A mensagem representa um **relatório semanal já consolidado**
+* O serviço **não realiza cálculos**
+* Um e-mail é enviado ao administrador contendo o resumo semanal
+* Em caso de falha no envio → exceção é lançada para permitir retry automático
+
+#### Conteúdo do E-mail
+
+* Descrição do relatório semanal
+* Explicação dos níveis de urgência
+* Data de emissão do relatório
+* Quantidade de avaliações por dia (tabela)
+* Quantidade de avaliações por urgência (tabela)
+
+---
+
 ## ⚙️ Configurações (Variáveis de Ambiente)
 
-As configurações do serviço são feitas **exclusivamente por variáveis de ambiente**, sem hardcode no código.
+As configurações do serviço são feitas **exclusivamente por variáveis de ambiente**.
 
-Exemplo de configuração local (`local.settings.json`):
+Exemplo (`local.settings.json`):
 
 ```json
 {
@@ -132,23 +183,39 @@ O arquivo `local.settings.json` **não é versionado** e está listado no `.giti
 * Maven
 * Azure Functions Core Tools
 * Conta SendGrid configurada
-* Namespace e fila no Azure Service Bus
+* Azure Service Bus com as filas configuradas
 
 ### Passos para executar localmente
 
-1. Compilar o projeto e gerar o staging da Function:
+1. Compilar o projeto:
 
 ```bash
 mvn clean package
 ```
 
-2. Subir a Azure Function localmente:
+2. Executar a Azure Function:
 
 ```bash
 mvn azure-functions:run
 ```
 
-3. Enviar uma mensagem para a fila (`q-ms-notificacao`) via Azure Portal ou Service Bus Explorer.
+3. Publicar mensagens nas filas:
+
+* `q-ms-notificacao`
+* `q-ms-weekly-report`
+
+---
+
+## 🧪 Testes
+
+O projeto possui **testes unitários** para:
+
+* Modelos de domínio
+* Templates de e-mail
+* Use cases
+* Azure Functions (adapters inbound)
+
+Todos os testes são executados **sem dependência de Azure ou SendGrid reais**, utilizando mocks.
 
 ---
 
@@ -165,20 +232,7 @@ mvn azure-functions:run
 
 * Logs disponíveis via Azure Functions
 * Falhas de envio de e-mail registradas nos logs
-* Integração com **Application Insights** para observabilidade
-
----
-
-## 🧪 Testes
-
-O projeto possui **testes unitários** para:
-
-* Domínio (`FeedbackMessage`)
-* Serviços de domínio (template de e-mail)
-* Use Cases
-* Azure Function (adapter inbound)
-
-Todos os testes são executados **sem dependência de Azure ou SendGrid reais**, utilizando mocks.
+* Integração com **Application Insights**
 
 ---
 
@@ -187,14 +241,14 @@ Todos os testes são executados **sem dependência de Azure ou SendGrid reais**,
 ☑ Serverless
 ☑ Execução em Cloud
 ☑ Responsabilidade Única
-☑ Notificação automática para problemas críticos
+☑ Notificação automática de eventos
+☑ Relatório semanal via mensageria
 ☑ Monitoramento
 ☑ Arquitetura bem definida e testável
-☑ Separação clara de responsabilidades
 
 ---
 
 ## 📌 Observação Final
 
-Este repositório contempla **exclusivamente** o microsserviço de notificação.
-A criação das mensagens na fila e a infraestrutura Azure são responsabilidades de outros componentes da solução.
+Este repositório contempla **exclusivamente o microsserviço de notificação**.
+A geração dos feedbacks, métricas e relatórios, assim como a infraestrutura Azure, são responsabilidades de outros componentes da solução.

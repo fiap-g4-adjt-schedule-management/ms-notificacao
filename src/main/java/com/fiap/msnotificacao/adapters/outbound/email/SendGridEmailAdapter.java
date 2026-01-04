@@ -9,23 +9,54 @@ import com.sendgrid.helpers.mail.objects.Email;
 
 public class SendGridEmailAdapter implements EmailPort {
 
-    @Override
-    public void enviarEmail(FeedbackMessage msg, String html) throws Exception {
+    private SendGrid client() {
+        return new SendGrid(System.getenv("SENDGRID_API_KEY"));
+    }
 
-        SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
+    private Email from() {
+        return new Email(
+                System.getenv("SENDGRID_FROM_EMAIL"),
+                "Notificações Tech Challenge"
+        );
+    }
+
+    private Email toAdmin() {
+        return new Email(System.getenv("ADMIN_NOTIFICATION_EMAIL"));
+    }
+
+    @Override
+    public void enviarEmailFeedbackCritico(FeedbackMessage msg, String html) throws Exception {
 
         Mail mail = new Mail(
-                new Email(System.getenv("SENDGRID_FROM_EMAIL"), "Notificações Tech Challenge"),
+                from(),
                 "Novo feedback recebido na plataforma",
-                new Email(System.getenv("ADMIN_NOTIFICATION_EMAIL")),
+                toAdmin(),
                 new Content("text/html", html)
         );
 
+        enviar(mail);
+    }
+
+    @Override
+    public void enviarEmailRelatorioSemanal(String html) throws Exception {
+
+        Mail mail = new Mail(
+                from(),
+                "Relatório semanal de feedbacks",
+                toAdmin(),
+                new Content("text/html", html)
+        );
+
+        enviar(mail);
+    }
+
+    private void enviar(Mail mail) throws Exception {
         Request request = new Request();
         request.setMethod(Method.POST);
         request.setEndpoint("mail/send");
         request.setBody(mail.build());
 
-        sg.api(request);
+        client().api(request);
     }
 }
+

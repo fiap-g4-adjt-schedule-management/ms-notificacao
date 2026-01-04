@@ -27,14 +27,14 @@ class NotificarCriticasFunctionTest {
         message.setDescription("Problema grave");
         message.setEmail("teste@email.com");
         message.setCritical(true);
-        message.setCreatedAt(Instant.parse("2025-12-23T15:00:00Z")); // 🔥 OBRIGATÓRIO AGORA
+        message.setCreatedAt(Instant.parse("2025-12-23T15:00:00Z"));
 
         when(templateService.gerarHtml(any()))
                 .thenReturn("<html>email</html>");
 
         useCase.executar(message);
 
-        verify(emailPort).enviarEmail(eq(message), any());
+        verify(emailPort).enviarEmailFeedbackCritico(eq(message), any());
     }
 
 }

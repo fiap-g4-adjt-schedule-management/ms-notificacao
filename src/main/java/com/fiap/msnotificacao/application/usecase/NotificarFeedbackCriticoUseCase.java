@@ -40,7 +40,7 @@ public class NotificarFeedbackCriticoUseCase {
 
         try {
             logger.info("[INFO] Enviando e-mail de notificação para adminstrador.");
-            emailPort.enviarEmail(message, html);
+            emailPort.enviarEmailFeedbackCritico(message, html);
             logger.info("SUCESSO] E-mail de notificação enviado ao administrador.");
         } catch (Exception e) {
             logger.severe("[ERRO] Falha ao enviar e-mail para o feedback ID" + message.getId() + "-" + e.getMessage());
