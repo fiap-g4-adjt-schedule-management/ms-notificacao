@@ -173,6 +173,13 @@ Exemplo (`local.settings.json`):
 ⚠️ **Importante:**
 O arquivo `local.settings.json` **não é versionado** e está listado no `.gitignore`.
 
+| Nome da variável           | Para que serve            |
+| -------------------------- | ------------------------- |
+| `SENDGRID_API_KEY`         | Chave da API do SendGrid  |
+| `SENDGRID_FROM_EMAIL`      | E-mail remetente          |
+| `ADMIN_NOTIFICATION_EMAIL` | Destinatário              |
+| `ServiceBusConnection`     | Conexão com o Service Bus |
+
 ---
 
 ## 🚀 Execução Local
