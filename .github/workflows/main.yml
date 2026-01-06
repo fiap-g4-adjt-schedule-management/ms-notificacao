@@ -27,7 +27,7 @@ jobs:
           cache: maven
 
       - name: Build Azure Function
-        run: mvn clean package -DskipTests  
+        run: mvn clean package -DskipTests -Dazure.functions.skipPrepareConfig=true 
 
       - name: Create Deployment Package
         # Entramos na pasta gerada pelo maven e zipamos o conteúdo interno
