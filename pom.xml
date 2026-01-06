@@ -77,6 +77,8 @@
                     <appName>ms-notificacao</appName>
                     <region>brazilsouth</region>
 
+                    <skipPrepareConfig>true</skipPrepareConfig>
+
                     <runtime>
                         <os>linux</os>
                         <javaVersion>17</javaVersion>
