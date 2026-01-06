@@ -26,8 +26,8 @@ public class NotificarCriticasFunction {
     public void run(
             @ServiceBusQueueTrigger(
                     name = "message",
-                    queueName = "q-ms-notificacao",
-                    connection = "ServiceBusConnection"
+                    queueName = "q-ms-critical-ratings",
+                    connection = "SERVICE_BUS_CONNECTION"
             ) FeedbackMessage message,
             ExecutionContext context
     ) {
