@@ -164,8 +164,8 @@ Exemplo (`local.settings.json`):
     "FUNCTIONS_WORKER_RUNTIME": "java",
     "ServiceBusConnection": "<service-bus-connection-string>",
     "SENDGRID_API_KEY": "<sendgrid-api-key>",
-    "SENDGRID_FROM_EMAIL": "alertas@techchallenge.com",
-    "ADMIN_NOTIFICATION_EMAIL": "admin@techchallenge.com"
+    "SENDGRID_FROM_EMAIL": "xxxx@xxx.xxx",
+    "ADMIN_NOTIFICATION_EMAIL": "xxxx@xxx.xxx
   }
 }
 ```
