@@ -165,7 +165,7 @@ Exemplo (`local.settings.json`):
     "ServiceBusConnection": "<service-bus-connection-string>",
     "SENDGRID_API_KEY": "<sendgrid-api-key>",
     "SENDGRID_FROM_EMAIL": "xxxx@xxx.xxx",
-    "ADMIN_NOTIFICATION_EMAIL": "xxxx@xxx.xxx
+    "ADMIN_NOTIFICATION_EMAIL": "xxxx@xxx.xxx"
   }
 }
 ```
