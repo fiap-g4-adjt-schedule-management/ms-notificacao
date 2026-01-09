@@ -26,7 +26,7 @@ public class NotificarRelatorioSemanalFunction {
     public void run(
             @ServiceBusQueueTrigger(
                     name = "message",
-                    queueName = "q-ms-weekly-report",
+                    queueName = "QUEUE_WEEKLY_REPORTt",
                     connection = "SERVICE_BUS_CONNECTION"
             ) RelatorioSemanalMessage message,
             ExecutionContext context

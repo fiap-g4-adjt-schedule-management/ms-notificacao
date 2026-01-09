@@ -78,7 +78,7 @@ Fluxo simplificado:
 #### Fila consumida
 
 ```
-q-ms-notificacao
+q-ms-critical-ratings
 ```
 
 #### Contrato da Mensagem
@@ -162,10 +162,12 @@ Exemplo (`local.settings.json`):
   "IsEncrypted": false,
   "Values": {
     "FUNCTIONS_WORKER_RUNTIME": "java",
-    "ServiceBusConnection": "<service-bus-connection-string>",
+    "SERVICE_BUS_CONNECTION": "<service-bus-connection-string>",
     "SENDGRID_API_KEY": "<sendgrid-api-key>",
     "SENDGRID_FROM_EMAIL": "alertas@techchallenge.com",
-    "ADMIN_NOTIFICATION_EMAIL": "admin@techchallenge.com"
+    "ADMIN_NOTIFICATION_EMAIL": "admin@techchallenge.com",
+    "QUEUE_CRITICAL_NOTIFICATION": "q-ms-critical-ratings",
+    "QUEUE_WEEKLY_REPORT": "q-ms-weekly-report"
   }
 }
 ```
@@ -201,7 +203,7 @@ mvn azure-functions:run
 
 3. Publicar mensagens nas filas:
 
-* `q-ms-notificacao`
+* `q-ms-critical-ratings`
 * `q-ms-weekly-report`
 
 ---
