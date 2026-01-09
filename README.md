@@ -78,7 +78,7 @@ Fluxo simplificado:
 #### Fila consumida
 
 ```
-q-ms-notificacao
+q-ms-critical-ratings
 ```
 
 #### Contrato da Mensagem
@@ -162,10 +162,11 @@ Exemplo (`local.settings.json`):
   "IsEncrypted": false,
   "Values": {
     "FUNCTIONS_WORKER_RUNTIME": "java",
-    "ServiceBusConnection": "<service-bus-connection-string>",
-    "SENDGRID_API_KEY": "<sendgrid-api-key>",
+    "SERVICE_BUS_CONNECTION": "<service-bus-connection-string>",
     "SENDGRID_FROM_EMAIL": "xxxx@xxx.xxx",
-    "ADMIN_NOTIFICATION_EMAIL": "xxxx@xxx.xxx"
+    "ADMIN_NOTIFICATION_EMAIL": "xxxx@xxx.xxx",
+    "QUEUE_CRITICAL_NOTIFICATION": "q-ms-critical-ratings",
+    "QUEUE_WEEKLY_REPORT": "q-ms-weekly-report"
   }
 }
 ```
@@ -178,7 +179,7 @@ O arquivo `local.settings.json` **não é versionado** e está listado no `.giti
 | `SENDGRID_API_KEY`         | Chave da API do SendGrid  |
 | `SENDGRID_FROM_EMAIL`      | E-mail remetente          |
 | `ADMIN_NOTIFICATION_EMAIL` | Destinatário              |
-| `ServiceBusConnection`     | Conexão com o Service Bus |
+| `SERVICE_BUS_CONNECTION`     | Conexão com o Service Bus |
 
 ---
 
@@ -208,7 +209,7 @@ mvn azure-functions:run
 
 3. Publicar mensagens nas filas:
 
-* `q-ms-notificacao`
+* `q-ms-critical-ratings`
 * `q-ms-weekly-report`
 
 ---
