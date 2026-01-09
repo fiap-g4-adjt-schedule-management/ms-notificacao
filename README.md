@@ -163,9 +163,8 @@ Exemplo (`local.settings.json`):
   "Values": {
     "FUNCTIONS_WORKER_RUNTIME": "java",
     "SERVICE_BUS_CONNECTION": "<service-bus-connection-string>",
-    "SENDGRID_API_KEY": "<sendgrid-api-key>",
-    "SENDGRID_FROM_EMAIL": "alertas@techchallenge.com",
-    "ADMIN_NOTIFICATION_EMAIL": "admin@techchallenge.com",
+    "SENDGRID_FROM_EMAIL": "xxxx@xxx.xxx",
+    "ADMIN_NOTIFICATION_EMAIL": "xxxx@xxx.xxx",
     "QUEUE_CRITICAL_NOTIFICATION": "q-ms-critical-ratings",
     "QUEUE_WEEKLY_REPORT": "q-ms-weekly-report"
   }
@@ -174,6 +173,13 @@ Exemplo (`local.settings.json`):
 
 ⚠️ **Importante:**
 O arquivo `local.settings.json` **não é versionado** e está listado no `.gitignore`.
+
+| Nome da variável           | Para que serve            |
+| -------------------------- | ------------------------- |
+| `SENDGRID_API_KEY`         | Chave da API do SendGrid  |
+| `SENDGRID_FROM_EMAIL`      | E-mail remetente          |
+| `ADMIN_NOTIFICATION_EMAIL` | Destinatário              |
+| `SERVICE_BUS_CONNECTION`     | Conexão com o Service Bus |
 
 ---
 
